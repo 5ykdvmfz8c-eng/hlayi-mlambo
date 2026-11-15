@@ -10,33 +10,171 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as AuthenticatedCreditAssessmentRouteImport } from './routes/_authenticated/credit-assessment'
+import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedRepaymentsRouteImport } from './routes/_authenticated/repayments'
+import { Route as AuthenticatedStatementsRouteImport } from './routes/_authenticated/statements'
+import { Route as AuthenticatedCustomersIndexRouteImport } from './routes/_authenticated/customers/index'
+import { Route as AuthenticatedCustomersCustomerIdRouteImport } from './routes/_authenticated/customers/$customerId'
+import { Route as AuthenticatedLoansIndexRouteImport } from './routes/_authenticated/loans/index'
+import { Route as AuthenticatedLoansLoanIdRouteImport } from './routes/_authenticated/loans/$loanId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedCreditAssessmentRoute =
+  AuthenticatedCreditAssessmentRouteImport.update({
+    id: '/credit-assessment',
+    path: '/credit-assessment',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedRepaymentsRoute = AuthenticatedRepaymentsRouteImport.update({
+  id: '/repayments',
+  path: '/repayments',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedStatementsRoute = AuthenticatedStatementsRouteImport.update({
+  id: '/statements',
+  path: '/statements',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedCustomersIndexRoute =
+  AuthenticatedCustomersIndexRouteImport.update({
+    id: '/customers/',
+    path: '/customers/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedCustomersCustomerIdRoute =
+  AuthenticatedCustomersCustomerIdRouteImport.update({
+    id: '/customers/$customerId',
+    path: '/customers/$customerId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedLoansIndexRoute = AuthenticatedLoansIndexRouteImport.update({
+  id: '/loans/',
+  path: '/loans/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedLoansLoanIdRoute =
+  AuthenticatedLoansLoanIdRouteImport.update({
+    id: '/loans/$loanId',
+    path: '/loans/$loanId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/credit-assessment': typeof AuthenticatedCreditAssessmentRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/repayments': typeof AuthenticatedRepaymentsRoute
+  '/statements': typeof AuthenticatedStatementsRoute
+  '/customers/$customerId': typeof AuthenticatedCustomersCustomerIdRoute
+  '/loans/$loanId': typeof AuthenticatedLoansLoanIdRoute
+  '/customers/': typeof AuthenticatedCustomersIndexRoute
+  '/loans/': typeof AuthenticatedLoansIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/credit-assessment': typeof AuthenticatedCreditAssessmentRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/repayments': typeof AuthenticatedRepaymentsRoute
+  '/statements': typeof AuthenticatedStatementsRoute
+  '/customers/$customerId': typeof AuthenticatedCustomersCustomerIdRoute
+  '/loans/$loanId': typeof AuthenticatedLoansLoanIdRoute
+  '/customers': typeof AuthenticatedCustomersIndexRoute
+  '/loans': typeof AuthenticatedLoansIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/_authenticated/credit-assessment': typeof AuthenticatedCreditAssessmentRoute
+  '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/repayments': typeof AuthenticatedRepaymentsRoute
+  '/_authenticated/statements': typeof AuthenticatedStatementsRoute
+  '/_authenticated/customers/$customerId': typeof AuthenticatedCustomersCustomerIdRoute
+  '/_authenticated/loans/$loanId': typeof AuthenticatedLoansLoanIdRoute
+  '/_authenticated/customers/': typeof AuthenticatedCustomersIndexRoute
+  '/_authenticated/loans/': typeof AuthenticatedLoansIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/reset-password'
+    | '/credit-assessment'
+    | '/dashboard'
+    | '/repayments'
+    | '/statements'
+    | '/customers/$customerId'
+    | '/loans/$loanId'
+    | '/customers/'
+    | '/loans/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/auth'
+    | '/reset-password'
+    | '/credit-assessment'
+    | '/dashboard'
+    | '/repayments'
+    | '/statements'
+    | '/customers/$customerId'
+    | '/loans/$loanId'
+    | '/customers'
+    | '/loans'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/reset-password'
+    | '/_authenticated/credit-assessment'
+    | '/_authenticated/dashboard'
+    | '/_authenticated/repayments'
+    | '/_authenticated/statements'
+    | '/_authenticated/customers/$customerId'
+    | '/_authenticated/loans/$loanId'
+    | '/_authenticated/customers/'
+    | '/_authenticated/loans/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +186,116 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/credit-assessment': {
+      id: '/_authenticated/credit-assessment'
+      path: '/credit-assessment'
+      fullPath: '/credit-assessment'
+      preLoaderRoute: typeof AuthenticatedCreditAssessmentRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/repayments': {
+      id: '/_authenticated/repayments'
+      path: '/repayments'
+      fullPath: '/repayments'
+      preLoaderRoute: typeof AuthenticatedRepaymentsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/statements': {
+      id: '/_authenticated/statements'
+      path: '/statements'
+      fullPath: '/statements'
+      preLoaderRoute: typeof AuthenticatedStatementsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/customers/': {
+      id: '/_authenticated/customers/'
+      path: '/customers'
+      fullPath: '/customers/'
+      preLoaderRoute: typeof AuthenticatedCustomersIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/customers/$customerId': {
+      id: '/_authenticated/customers/$customerId'
+      path: '/customers/$customerId'
+      fullPath: '/customers/$customerId'
+      preLoaderRoute: typeof AuthenticatedCustomersCustomerIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/loans/': {
+      id: '/_authenticated/loans/'
+      path: '/loans'
+      fullPath: '/loans/'
+      preLoaderRoute: typeof AuthenticatedLoansIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/loans/$loanId': {
+      id: '/_authenticated/loans/$loanId'
+      path: '/loans/$loanId'
+      fullPath: '/loans/$loanId'
+      preLoaderRoute: typeof AuthenticatedLoansLoanIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedCreditAssessmentRoute: typeof AuthenticatedCreditAssessmentRoute
+  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedRepaymentsRoute: typeof AuthenticatedRepaymentsRoute
+  AuthenticatedStatementsRoute: typeof AuthenticatedStatementsRoute
+  AuthenticatedCustomersCustomerIdRoute: typeof AuthenticatedCustomersCustomerIdRoute
+  AuthenticatedLoansLoanIdRoute: typeof AuthenticatedLoansLoanIdRoute
+  AuthenticatedCustomersIndexRoute: typeof AuthenticatedCustomersIndexRoute
+  AuthenticatedLoansIndexRoute: typeof AuthenticatedLoansIndexRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedCreditAssessmentRoute: AuthenticatedCreditAssessmentRoute,
+  AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedRepaymentsRoute: AuthenticatedRepaymentsRoute,
+  AuthenticatedStatementsRoute: AuthenticatedStatementsRoute,
+  AuthenticatedCustomersCustomerIdRoute: AuthenticatedCustomersCustomerIdRoute,
+  AuthenticatedLoansLoanIdRoute: AuthenticatedLoansLoanIdRoute,
+  AuthenticatedCustomersIndexRoute: AuthenticatedCustomersIndexRoute,
+  AuthenticatedLoansIndexRoute: AuthenticatedLoansIndexRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
