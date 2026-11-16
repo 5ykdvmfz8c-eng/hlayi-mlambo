@@ -12,7 +12,7 @@ import { LoanFormDialog } from "@/components/app/LoanFormDialog";
 import { fmtDate, money } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/loans/")({
-  validateSearch: (s: Record<string, unknown>): { status?: string } => (typeof s.status === "string" ? { status: s.status } : {}),
+  validateSearch: (s: Record<string, unknown>): { status?: string } => (typeof s["status"] === "string" ? { status: s["status"] } : {}),
   head: () => ({ meta: [{ title: "Loans — H&M Credit Portal" }] }),
   component: LoansPage,
 });

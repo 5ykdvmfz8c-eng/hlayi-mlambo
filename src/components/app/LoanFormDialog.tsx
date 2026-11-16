@@ -46,10 +46,10 @@ export function LoanFormDialog({ open, onOpenChange, customerId, onSaved }: { op
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!cust) return toast.error("Select a customer");
-    if (!(terms.principal > 0)) return toast.error("Enter the loan amount");
-    if (Number(f.interest_rate) < 0 || Number(f.interest_rate) > 100) return toast.error("Interest rate must be between 0 and 100%");
-    if (f.first_payment_date < f.issue_date) return toast.error("First payment date cannot be before the issue date");
+    if (!cust) return void toast.error("Select a customer");
+    if (!(terms.principal > 0)) return void toast.error("Enter the loan amount");
+    if (Number(f.interest_rate) < 0 || Number(f.interest_rate) > 100) return void toast.error("Interest rate must be between 0 and 100%");
+    if (f.first_payment_date < f.issue_date) return void toast.error("First payment date cannot be before the issue date");
     setBusy(true);
     const { data, error } = await supabase
       .from("loans")
@@ -68,7 +68,7 @@ export function LoanFormDialog({ open, onOpenChange, customerId, onSaved }: { op
       .select("id")
       .single();
     setBusy(false);
-    if (error) return toast.error(friendlyError(error));
+    if (error) return void toast.error(friendlyError(error));
     toast.success("Loan recorded — awaiting approval");
     qc.invalidateQueries();
     onOpenChange(false);
@@ -115,7 +115,7 @@ export function LoanFormDialog({ open, onOpenChange, customerId, onSaved }: { op
             <Row k="Fees" v={money(terms.fees)} />
             <div className="border-t pt-2"><Row k="Total repayable" v={<span className="text-base font-semibold text-navy">{money(terms.totalRepayable)}</span>} /></div>
             <Row k="Instalment" v={`${money(terms.instalmentAmount)} × ${terms.instalments}`} />
-            <Row k="Final payment" v={schedule.length ? fmtDate(schedule[schedule.length - 1].dueDate) : "—"} />
+            <Row k="Final payment" v={schedule.length ? fmtDate(schedule[schedule.length - 1]!.dueDate) : "—"} />
             {ratio != null && (
               <div className={`rounded-lg px-3 py-2 text-xs ${ratio > 40 ? "bg-destructive-soft text-destructive" : ratio > 25 ? "bg-warning-soft text-warning-foreground" : "bg-success-soft text-success"}`}>
                 Instalment is about {ratio.toFixed(0)}% of monthly income.

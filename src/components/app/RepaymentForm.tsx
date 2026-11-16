@@ -37,7 +37,7 @@ export function RepaymentForm({ customerId, loanId, onSaved, onCancel }: { custo
   const selected = loans.data?.find((l) => l.id === loan);
 
   useEffect(() => {
-    if (loans.data && !loanId) setLoan(loans.data.length === 1 ? loans.data[0].id! : "");
+    if (loans.data && !loanId) setLoan(loans.data.length === 1 ? loans.data[0]!.id! : "");
   }, [loans.data, loanId]);
   useEffect(() => {
     if (selected && !f.amount) setF((p) => ({ ...p, amount: String(Number(selected.next_due_amount ?? 0).toFixed(2)) }));
@@ -55,12 +55,12 @@ export function RepaymentForm({ customerId, loanId, onSaved, onCancel }: { custo
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!loan || !selected) return toast.error("Select a loan");
+    if (!loan || !selected) return void toast.error("Select a loan");
     const amount = Math.round(Number(f.amount) * 100) / 100;
-    if (!(amount > 0)) return toast.error("Enter the amount paid");
-    if (amount > Number(selected.outstanding_balance) + 0.004) return toast.error(`Amount exceeds the outstanding balance of ${money(selected.outstanding_balance)}`);
-    if (!f.transaction_reference.trim()) return toast.error("Enter the transaction / reference number");
-    if (f.payment_date > saToday()) return toast.error("Payment date cannot be in the future");
+    if (!(amount > 0)) return void toast.error("Enter the amount paid");
+    if (amount > Number(selected.outstanding_balance) + 0.004) return void toast.error(`Amount exceeds the outstanding balance of ${money(selected.outstanding_balance)}`);
+    if (!f.transaction_reference.trim()) return void toast.error("Enter the transaction / reference number");
+    if (f.payment_date > saToday()) return void toast.error("Payment date cannot be in the future");
     setBusy(true);
     const { error } = await supabase.from("repayments").insert({
       loan_id: loan,
@@ -72,7 +72,7 @@ export function RepaymentForm({ customerId, loanId, onSaved, onCancel }: { custo
       notes: f.notes.trim() || null,
     });
     setBusy(false);
-    if (error) return toast.error(friendlyError(error));
+    if (error) return void toast.error(friendlyError(error));
     toast.success(`Payment of ${money(amount)} saved. Balance updated.`);
     qc.invalidateQueries();
     setF({ amount: "", payment_date: saToday(), payment_method: "eft", transaction_reference: "", notes: "" });

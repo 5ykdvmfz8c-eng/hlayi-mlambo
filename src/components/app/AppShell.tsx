@@ -219,7 +219,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         </SheetContent>
       </Sheet>
 
-      <div className="lg:pl-64">
+      <div className="lg:pl-64 print:pl-0">
         <header className="no-print sticky top-0 z-20 flex h-16 items-center gap-3 border-b bg-card/85 px-4 backdrop-blur sm:px-6">
           <button onClick={() => setMobileOpen(true)} className="rounded-lg p-2 hover:bg-accent lg:hidden" aria-label="Open menu"><Menu className="size-5" /></button>
           <div className="hidden flex-1 sm:block"><GlobalSearch /></div>
@@ -252,7 +252,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           </DropdownMenu>
         </header>
         <div className="no-print border-b bg-card px-4 py-2 sm:hidden"><GlobalSearch /></div>
-        <main className="mx-auto max-w-[1400px] px-4 py-6 sm:px-6 lg:py-8">{children}</main>
+        <main className="mx-auto max-w-[1400px] px-4 py-6 sm:px-6 lg:py-8 print:p-0">{children}</main>
       </div>
     </div>
   );

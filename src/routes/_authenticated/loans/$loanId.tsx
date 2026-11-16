@@ -58,11 +58,11 @@ function LoanDetails() {
 
   async function runAction() {
     if (!action) return;
-    if (action === "cancel" && !reason.trim()) return toast.error("Enter a reason");
+    if (action === "cancel" && !reason.trim()) return void toast.error("Enter a reason");
     setBusy(true);
-    const { error } = await supabase.rpc("change_loan_status", { _loan_id: loanId, _action: action, _reason: reason.trim() || undefined });
+    const { error } = await supabase.rpc("change_loan_status", { _loan_id: loanId, _action: action, ...(reason.trim() ? { _reason: reason.trim() } : {}) });
     setBusy(false);
-    if (error) return toast.error(friendlyError(error));
+    if (error) return void toast.error(friendlyError(error));
     toast.success(action === "approve" ? "Loan approved" : action === "disburse" ? "Loan disbursed — now active" : "Loan cancelled");
     setAction(null);
     setReason("");
@@ -71,11 +71,11 @@ function LoanDetails() {
 
   async function runReverse() {
     if (!reverse) return;
-    if (!reason.trim()) return toast.error("Enter a reason for the reversal");
+    if (!reason.trim()) return void toast.error("Enter a reason for the reversal");
     setBusy(true);
     const { error } = await supabase.rpc("reverse_repayment", { _repayment_id: reverse.id, _reason: reason.trim() });
     setBusy(false);
-    if (error) return toast.error(friendlyError(error));
+    if (error) return void toast.error(friendlyError(error));
     toast.success("Payment reversed and balance recalculated");
     setReverse(null);
     setReason("");

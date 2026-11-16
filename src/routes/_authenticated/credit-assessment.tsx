@@ -18,7 +18,7 @@ import { RISK_BANDS, riskBandFor } from "@/lib/finance";
 import { fmtDate, friendlyError, maskId, money, titleCase } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/credit-assessment")({
-  validateSearch: (s: Record<string, unknown>): { customer?: string } => (typeof s.customer === "string" ? { customer: s.customer } : {}),
+  validateSearch: (s: Record<string, unknown>): { customer?: string } => (typeof s["customer"] === "string" ? { customer: s["customer"] } : {}),
   head: () => ({ meta: [{ title: "Credit assessment — H&M Credit Portal" }] }),
   component: CreditAssessmentPage,
 });
@@ -205,11 +205,11 @@ function AssessmentForm({ customerId, pending, remaining, onSaved }: { customerI
   const band = riskBandFor(score);
 
   async function save(complete: boolean) {
-    if (!consent) return toast.error("Confirm that the customer has given consent first");
-    if (!pending && remaining <= 0) return toast.error("You have no credits left today. Ask an administrator to adjust your allowance.");
+    if (!consent) return void toast.error("Confirm that the customer has given consent first");
+    if (!pending && remaining <= 0) return void toast.error("You have no credits left today. Ask an administrator to adjust your allowance.");
     if (complete) {
-      if (score == null || Number.isNaN(score) || score < 0 || score > 999) return toast.error("Enter the score from the bureau report (0–999)");
-      if (!f.bureau_name || !f.bureau_reference.trim()) return toast.error("Select the bureau and enter the report reference");
+      if (score == null || Number.isNaN(score) || score < 0 || score > 999) return void toast.error("Enter the score from the bureau report (0–999)");
+      if (!f.bureau_name || !f.bureau_reference.trim()) return void toast.error("Select the bureau and enter the report reference");
     }
     const payload = {
       status: complete ? "completed" : "pending",
@@ -226,7 +226,7 @@ function AssessmentForm({ customerId, pending, remaining, onSaved }: { customerI
       ? await supabase.from("credit_assessments").update(payload).eq("id", pending.id)
       : await supabase.from("credit_assessments").insert({ ...payload, customer_id: customerId, consent_given: true, consent_method: f.consent_method });
     setBusy(false);
-    if (error) return toast.error(friendlyError(error));
+    if (error) return void toast.error(friendlyError(error));
     toast.success(complete ? "Assessment completed" : "Assessment saved as pending");
     onSaved();
   }

@@ -1,7 +1,7 @@
 import { riskBandFor } from "@/lib/finance";
 import { riskLabel } from "./kit";
 
-const BAND_COLOR: Record<string, string> = {
+const BAND_COLOR = {
   excellent: "var(--color-success)", good: "var(--color-primary)", fair: "var(--color-warning)", poor: "var(--color-chart-4)", high_risk: "var(--color-destructive)",
 };
 

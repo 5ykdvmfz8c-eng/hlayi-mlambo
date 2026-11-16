@@ -12,8 +12,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { CustomerPicker } from "@/components/app/CustomerPicker";
 import { EmptyState, LoadingRows, PageHeader, Panel } from "@/components/app/kit";
 import { Logo } from "@/components/app/Logo";
+import { COMPANY, addressLines, statementAmount } from "@/lib/company";
 import { withRunningBalance } from "@/lib/finance";
-import { buildStatementPdf, type StatementData } from "@/lib/statement-pdf";
+import { buildStatementPdf, footerText, type StatementData } from "@/lib/statement-pdf";
 import { fmtDate, fmtDateTime, friendlyError, money, saToday } from "@/lib/format";
 
 type Search = { customer?: string; loan?: string; statement?: string };
@@ -21,9 +22,9 @@ type Search = { customer?: string; loan?: string; statement?: string };
 export const Route = createFileRoute("/_authenticated/statements")({
   validateSearch: (s: Record<string, unknown>): Search => {
     const out: Search = {};
-    if (typeof s.customer === "string") out.customer = s.customer;
-    if (typeof s.loan === "string") out.loan = s.loan;
-    if (typeof s.statement === "string") out.statement = s.statement;
+    if (typeof s["customer"] === "string") out.customer = s["customer"];
+    if (typeof s["loan"] === "string") out.loan = s["loan"];
+    if (typeof s["statement"] === "string") out.statement = s["statement"];
     return out;
   },
   head: () => ({ meta: [{ title: "Statements — H&M Credit Portal" }] }),
@@ -55,12 +56,12 @@ function StatementsPage() {
   });
 
   async function generate() {
-    if (!customerId) return toast.error("Select a customer");
-    if (to < from) return toast.error("The end date must be after the start date");
+    if (!customerId) return void toast.error("Select a customer");
+    if (to < from) return void toast.error("The end date must be after the start date");
     setBusy(true);
     const { data, error } = await supabase.rpc("generate_statement", { _customer_id: customerId, _loan_id: (loanSel === "all" ? null : loanSel) as string, _start: from, _end: to });
     setBusy(false);
-    if (error) return toast.error(friendlyError(error));
+    if (error) return void toast.error(friendlyError(error));
     toast.success("Statement generated");
     qc.invalidateQueries({ queryKey: ["statements-list"] });
     navigate({ to: "/statements", search: { ...search, statement: data as string } });
@@ -74,7 +75,7 @@ function StatementsPage() {
           <div className="space-y-1.5"><Label>Customer *</Label><CustomerPicker value={customerId} onChange={(c) => navigate({ to: "/statements", search: c ? { customer: c.id } : {} })} /></div>
           <div className="space-y-1.5">
             <Label>Loan</Label>
-            <Select value={loanSel} onValueChange={(v) => navigate({ to: "/statements", search: { customer: customerId ?? undefined, loan: v === "all" ? undefined : v } })} disabled={!customerId}>
+            <Select value={loanSel} onValueChange={(v) => navigate({ to: "/statements", search: { ...(customerId ? { customer: customerId } : {}), ...(v === "all" ? {} : { loan: v }) } })} disabled={!customerId}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent><SelectItem value="all">All loans</SelectItem>{(loans.data ?? []).map((l) => <SelectItem key={l.id} value={l.id}>{l.loan_reference}</SelectItem>)}</SelectContent>
             </Select>
@@ -131,6 +132,8 @@ function StatementView({ id }: { id: string }) {
       ]);
       const rows = withRunningBalance((txRes.data ?? []).map((t) => ({ ...t, debit: Number(t.debit), credit: Number(t.credit) })), Number(s.opening_balance));
       return {
+        id: s.id,
+        scope: s.loan_id ? `Loan ${(loansRes.data ?? [])[0]?.loan_reference ?? ""}` : "All loans",
         statement_number: s.statement_number,
         generated_at: s.generated_at,
         period_start: s.period_start,
@@ -163,9 +166,14 @@ function StatementView({ id }: { id: string }) {
     }
   }
 
+  const footer = footerText(d);
+  const amt = statementAmount;
+  const companyLines = [COMPANY.name, ...COMPANY.addressLines, ...(COMPANY.phone ? [`Tel: ${COMPANY.phone}`] : [])];
+  const personal = [d.customer.name, ...addressLines(d.customer.address), d.customer.phone].filter(Boolean);
+
   return (
-    <section className="rounded-2xl border bg-card shadow-card print:border-0 print:shadow-none">
-      <div className="no-print flex flex-wrap items-center gap-2 border-b px-5 py-3">
+    <section>
+      <div className="no-print mb-3 flex flex-wrap items-center gap-2 rounded-2xl border bg-card px-5 py-3 shadow-card">
         <span className="text-sm font-semibold text-navy">Statement preview</span>
         <span className={`text-xs ${reconciled ? "text-success" : "text-destructive"}`}>{reconciled ? "✓ Reconciled with recorded transactions" : "Balance mismatch — contact an administrator"}</span>
         <div className="ml-auto flex gap-2">
@@ -173,51 +181,74 @@ function StatementView({ id }: { id: string }) {
           <Button variant="outline" onClick={() => window.print()}><Printer /> Print</Button>
         </div>
       </div>
-      <div className="p-6 sm:p-8">
-        <div className="flex flex-col gap-4 rounded-xl bg-brand-gradient p-6 sm:flex-row sm:items-center sm:justify-between print:rounded-none">
-          <Logo />
-          <div className="text-left text-navy-foreground sm:text-right">
-            <p className="font-display text-xl font-semibold">Customer Statement</p>
-            <p className="text-xs text-navy-muted">{d.statement_number}</p>
+
+      <div className="overflow-x-auto">
+        <article className="mx-auto min-w-[720px] max-w-[860px] border bg-card p-10 text-[13px] leading-snug text-foreground shadow-card print:min-w-0 print:max-w-none print:border-0 print:p-0 print:shadow-none">
+          <div className="flex items-start justify-between gap-6">
+            <div>
+              <p className="text-sm">{COMPANY.tagline}</p>
+              <h2 className="mt-2 text-2xl font-bold">Loan Account Statement</h2>
+            </div>
+            <Logo tone="dark" />
           </div>
-        </div>
-        <div className="mt-6 grid gap-6 text-sm sm:grid-cols-2">
-          <dl className="space-y-1.5">
-            <Row k="Customer" v={d.customer.name} /><Row k="Account no." v={d.customer.account_number} /><Row k="Contact" v={d.customer.phone} /><Row k="Address" v={d.customer.address ?? "—"} />
-          </dl>
-          <dl className="space-y-1.5">
-            <Row k="Statement date" v={fmtDate(d.generated_at)} /><Row k="Period" v={`${fmtDate(d.period_start)} – ${fmtDate(d.period_end)}`} />
-            <Row k="Opening balance" v={money(d.opening_balance)} /><Row k="Outstanding balance" v={<b className="text-navy">{money(d.closing_balance)}</b>} />
-          </dl>
-        </div>
-        <div className="mt-6 overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead className="bg-secondary text-left text-xs text-muted-foreground"><tr><th className="px-3 py-2">Loan ref</th><th className="px-3 py-2 text-right">Borrowed</th><th className="px-3 py-2 text-right">Interest</th><th className="px-3 py-2 text-right">Fees</th><th className="px-3 py-2 text-right">Total repayable</th><th className="px-3 py-2 text-right">Paid</th><th className="px-3 py-2 text-right">Outstanding</th></tr></thead>
-            <tbody>{d.loans.map((l) => (
-              <tr key={l.loan_reference} className="border-t"><td className="px-3 py-2">{l.loan_reference}</td><td className="px-3 py-2 text-right tabular">{money(l.principal)}</td><td className="px-3 py-2 text-right tabular">{money(l.interest_amount)}</td><td className="px-3 py-2 text-right tabular">{money(l.fees)}</td><td className="px-3 py-2 text-right tabular">{money(l.total_repayable)}</td><td className="px-3 py-2 text-right tabular">{money(l.amount_paid)}</td><td className="px-3 py-2 text-right font-semibold tabular">{money(l.outstanding_balance)}</td></tr>
-            ))}</tbody>
-          </table>
-        </div>
-        <h3 className="mt-6 text-sm font-semibold text-navy">Transactions</h3>
-        <div className="mt-2 overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead className="bg-navy text-left text-xs text-navy-foreground"><tr><th className="px-3 py-2">Date</th><th className="px-3 py-2">Description</th><th className="px-3 py-2 text-right">Debit</th><th className="px-3 py-2 text-right">Credit</th><th className="px-3 py-2 text-right">Balance</th></tr></thead>
-            <tbody>
-              <tr className="border-t"><td className="px-3 py-2">{fmtDate(d.period_start)}</td><td className="px-3 py-2 text-muted-foreground">Opening balance</td><td /><td /><td className="px-3 py-2 text-right tabular">{money(d.opening_balance)}</td></tr>
+
+          <div className="mt-4 grid grid-cols-[1fr_auto_1fr] items-start gap-6">
+            <div className="self-end font-bold">{companyLines.map((l) => <p key={l}>{l}</p>)}</div>
+            <div className="w-52 border-2 border-foreground px-3 py-3 text-center">
+              <p>H&amp;M Consulting &amp; Tech</p>
+              <p className="mt-1 text-base">{fmtDate(d.generated_at)}</p>
+              <p className="text-base">Ref: {d.statement_number}</p>
+              <p className="text-base">{d.scope}</p>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <p className="text-lg font-bold">Account Summary</p>
+                <p className="text-xs">Outstanding balance</p>
+                <p className="text-xs tabular">R {amt(d.closing_balance)}</p>
+              </div>
+              <dl className="grid grid-cols-[auto_auto] justify-end gap-x-3 font-bold">
+                <dt className="text-right">From Date:</dt><dd className="tabular">{fmtDate(d.period_start)}</dd>
+                <dt className="text-right">To Date:</dt><dd className="tabular">{fmtDate(d.period_end)}</dd>
+                <dt className="text-right">Print Date:</dt><dd className="tabular">{fmtDate(new Date())}</dd>
+              </dl>
+            </div>
+          </div>
+
+          <div className="mt-6 flex items-start justify-between gap-6">
+            <div>
+              <p className="text-[15px] font-bold">Personal Details</p>
+              {personal.map((l, i) => <p key={i}>{l}</p>)}
+            </div>
+            <p className="mt-5 flex gap-6"><span>Account Number</span><span className="tabular">{d.customer.account_number}</span></p>
+          </div>
+
+          {d.loans.length > 0 && (
+            <table className="mt-6 w-full text-xs">
+              <thead className="text-left font-bold"><tr><th className="py-1 pr-2">Loan Reference</th><th className="py-1 pr-2">Issue Date</th><th className="py-1 text-right">Borrowed (R)</th><th className="py-1 text-right">Interest (R)</th><th className="py-1 text-right">Fees (R)</th><th className="py-1 text-right">Total Repayable (R)</th><th className="py-1 text-right">Paid (R)</th><th className="py-1 text-right">Outstanding (R)</th></tr></thead>
+              <tbody>{d.loans.map((l) => (
+                <tr key={l.loan_reference}><td className="py-0.5 pr-2">{l.loan_reference}</td><td className="py-0.5 pr-2 tabular">{fmtDate(l.issue_date)}</td><td className="text-right tabular">{amt(l.principal)}</td><td className="text-right tabular">{amt(l.interest_amount)}</td><td className="text-right tabular">{amt(l.fees)}</td><td className="text-right tabular">{amt(l.total_repayable)}</td><td className="text-right tabular">{amt(l.amount_paid)}</td><td className="text-right tabular">{amt(l.outstanding_balance)}</td></tr>
+              ))}</tbody>
+            </table>
+          )}
+
+          <table className="mt-6 w-full text-xs">
+            <thead className="text-left align-bottom font-bold"><tr><th className="w-24 py-1">Posting Date</th><th className="w-24 py-1">Transaction Date</th><th className="py-1">Description</th><th className="w-28 py-1 text-right">Money In (R)</th><th className="w-28 py-1 text-right">Money Out (R)</th><th className="w-28 py-1 text-right">Balance (R)</th></tr></thead>
+            <tbody className="align-top">
+              <tr><td className="py-0.5 tabular">{fmtDate(d.period_start)}</td><td className="tabular">{fmtDate(d.period_start)}</td><td>Opening Balance</td><td /><td /><td className="text-right tabular">{amt(d.opening_balance)}</td></tr>
               {d.rows.map((r, i) => (
-                <tr key={i} className="border-t"><td className="px-3 py-2">{fmtDate(r.txn_date)}</td><td className="px-3 py-2">{r.description}</td><td className="px-3 py-2 text-right tabular">{r.debit ? money(r.debit) : "-"}</td><td className="px-3 py-2 text-right tabular text-success">{r.credit ? money(r.credit) : "-"}</td><td className="px-3 py-2 text-right font-semibold tabular">{money(r.balance)}</td></tr>
+                <tr key={i}><td className="py-0.5 tabular">{fmtDate(r.created_at)}</td><td className="tabular">{fmtDate(r.txn_date)}</td><td className="pr-3">{r.description}</td><td className="text-right tabular">{r.credit ? amt(r.credit) : ""}</td><td className="text-right tabular">{r.debit ? amt(r.debit) : ""}</td><td className="text-right tabular">{amt(r.balance)}</td></tr>
               ))}
-              {!d.rows.length && <tr className="border-t"><td colSpan={5} className="px-3 py-4 text-center text-muted-foreground">No transactions in this period.</td></tr>}
+              {!d.rows.length && <tr><td colSpan={6} className="py-3 text-center text-muted-foreground">No transactions in this period.</td></tr>}
             </tbody>
-            <tfoot className="bg-secondary font-semibold"><tr><td /><td className="px-3 py-2">Totals / closing balance</td><td className="px-3 py-2 text-right tabular">{money(d.total_debits)}</td><td className="px-3 py-2 text-right tabular">{money(d.total_credits)}</td><td className="px-3 py-2 text-right tabular">{money(d.closing_balance)}</td></tr></tfoot>
+            <tfoot className="border-t border-foreground font-bold"><tr><td /><td /><td className="py-1">Totals / Closing Balance</td><td className="text-right tabular">{amt(d.total_credits)}</td><td className="text-right tabular">{amt(d.total_debits)}</td><td className="text-right tabular">{amt(d.closing_balance)}</td></tr></tfoot>
           </table>
-        </div>
-        <p className="mt-6 text-xs text-muted-foreground">Generated {fmtDateTime(d.generated_at)} by {d.generatedBy}. Confidential — contains personal information protected under POPIA.</p>
+
+          <footer className="mt-10 text-center text-[11px]">
+            <p>{footer.line1}</p>
+            <p>{footer.line2}</p>
+          </footer>
+        </article>
       </div>
     </section>
   );
-}
-
-function Row({ k, v }: { k: string; v: React.ReactNode }) {
-  return <div className="flex justify-between gap-4"><dt className="text-muted-foreground">{k}</dt><dd className="text-right font-medium">{v}</dd></div>;
 }

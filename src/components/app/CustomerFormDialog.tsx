@@ -62,7 +62,7 @@ export function CustomerFormDialog({
     e.preventDefault();
     const schema = editing && !form.id_number ? customerSchema.extend({ id_number: z.string() }) : customerSchema;
     const parsed = schema.safeParse(form);
-    if (!parsed.success) return toast.error(parsed.error.issues[0].message);
+    if (!parsed.success) return void toast.error(parsed.error.issues[0]?.message ?? "Please check the form");
     setBusy(true);
     try {
       const payload = { ...parsed.data, id_number: parsed.data.id_number.replace(/\s/g, "") };

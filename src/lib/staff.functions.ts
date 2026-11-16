@@ -164,7 +164,7 @@ export const updateStaff = createServerFn({ method: "POST" })
     }
 
     const changes: string[] = [];
-    const profilePatch: Record<string, unknown> = {};
+    const profilePatch: { full_name?: string; phone?: string | null; is_active?: boolean } = {};
     if (data.full_name) profilePatch.full_name = data.full_name;
     if (data.phone !== undefined) profilePatch.phone = data.phone || null;
     if (data.is_active !== undefined) {

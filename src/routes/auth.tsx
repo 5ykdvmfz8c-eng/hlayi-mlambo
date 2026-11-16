@@ -191,7 +191,7 @@ function SetupForm({ onDone, onBack }: { onDone: () => void; onBack: () => void 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     const parsed = setupSchema.safeParse(form);
-    if (!parsed.success) return toast.error(parsed.error.issues[0].message);
+    if (!parsed.success) return void toast.error(parsed.error.issues[0]?.message ?? "Please check the form");
     setBusy(true);
     try {
       await createFirstAdmin({ data: { full_name: form.full_name, email: form.email, password: form.password } });

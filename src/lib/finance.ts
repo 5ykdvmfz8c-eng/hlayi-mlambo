@@ -20,7 +20,7 @@ export function computeLoanTerms(input: {
 }
 
 export function instalmentDueDate(first: string, freq: Frequency, k: number): string {
-  const [y, m, d] = first.split("-").map(Number);
+  const [y = 1970, m = 1, d = 1] = first.split("-").map(Number);
   const base = new Date(Date.UTC(y, m - 1, d));
   if (freq === "weekly") base.setUTCDate(base.getUTCDate() + 7 * k);
   else if (freq === "fortnightly") base.setUTCDate(base.getUTCDate() + 14 * k);

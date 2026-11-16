@@ -105,7 +105,7 @@ export const riskLabel = (band: string | null | undefined) => (band ? (RISK[band
 export function RiskBadge({ band }: { band: string | null | undefined }) {
   if (!band) return <Pill tone="muted">Not assessed</Pill>;
   const r = RISK[band];
-  return <Pill tone={r?.tone}>{r?.label ?? band}</Pill>;
+  return <Pill tone={r?.tone ?? "muted"}>{r?.label ?? band}</Pill>;
 }
 
 export function EmptyState({ icon: Icon, title, text, action }: { icon: LucideIcon; title: string; text?: string; action?: ReactNode }) {

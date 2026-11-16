@@ -11,7 +11,7 @@ import { RepaymentForm } from "@/components/app/RepaymentForm";
 import { fmtDate, money, titleCase } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/repayments")({
-  validateSearch: (s: Record<string, unknown>): { customer?: string } => (typeof s.customer === "string" ? { customer: s.customer } : {}),
+  validateSearch: (s: Record<string, unknown>): { customer?: string } => (typeof s["customer"] === "string" ? { customer: s["customer"] } : {}),
   head: () => ({ meta: [{ title: "Repayments — H&M Credit Portal" }] }),
   component: RepaymentsPage,
 });
@@ -44,7 +44,7 @@ function RepaymentsPage() {
       <PageHeader title="Repayments" subtitle="Capture customer payments and update loan balances" />
       {can("repayments.record") ? (
         <Panel title="Record repayment" className="mb-6">
-          <RepaymentForm key={search.customer ?? "none"} customerId={search.customer} />
+          <RepaymentForm key={search.customer ?? "none"} {...(search.customer ? { customerId: search.customer } : {})} />
         </Panel>
       ) : (
         <div className="mb-6 rounded-2xl border bg-card p-4 text-sm text-muted-foreground shadow-card">Your role can view repayments but not record them.</div>
