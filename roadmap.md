@@ -9,7 +9,7 @@
 - [x] Loans list + loan details (approve, disburse, cancel)
 - [x] Repayments (record, reverse)
 - [x] Statements (PDF, print, history)
-- [ ] Reports (PDF + Excel)
+- [x] Reports (PDF + Excel)
 - [ ] Notifications centre
 - [ ] Staff management + daily credit allowance + settings
 - [ ] Tests for finance rules, end-to-end check

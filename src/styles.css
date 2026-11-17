@@ -158,7 +158,17 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* Zero page margin stops the browser printing its own page title, web address and date on statements. */
+@page {
+  size: A4;
+  margin: 0;
+}
 @media print {
   .no-print { display: none !important; }
   body { background: white; }
+  .print-sheet {
+    padding: 14mm 14mm 12mm;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
 }

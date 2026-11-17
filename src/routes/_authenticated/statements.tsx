@@ -69,7 +69,7 @@ function StatementsPage() {
 
   return (
     <>
-      <PageHeader title="Customer statements" subtitle="Generate, download and print customer statements" />
+      <div className="no-print"><PageHeader title="Customer statements" subtitle="Generate, download and print customer statements" /></div>
       <Panel className="no-print mb-6">
         <div className="grid gap-4 md:grid-cols-[1.4fr_1fr_0.8fr_0.8fr_auto] md:items-end">
           <div className="space-y-1.5"><Label>Customer *</Label><CustomerPicker value={customerId} onChange={(c) => navigate({ to: "/statements", search: c ? { customer: c.id } : {} })} /></div>
@@ -183,7 +183,7 @@ function StatementView({ id }: { id: string }) {
       </div>
 
       <div className="overflow-x-auto">
-        <article className="mx-auto min-w-[720px] max-w-[860px] border bg-card p-10 text-[13px] leading-snug text-foreground shadow-card print:min-w-0 print:max-w-none print:border-0 print:p-0 print:shadow-none">
+        <article className="print-sheet mx-auto min-w-[720px] max-w-[860px] border bg-card p-10 text-[13px] leading-snug text-foreground shadow-card print:min-w-0 print:max-w-none print:border-0 print:shadow-none">
           <div className="flex items-start justify-between gap-6">
             <div>
               <p className="text-sm">{COMPANY.tagline}</p>

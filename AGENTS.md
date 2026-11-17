@@ -28,3 +28,7 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## Project rules
+- Reports are built client-side in `src/routes/_authenticated/reports.tsx` as a `Report` object and exported via `src/lib/report-export.ts`; period ranges come from `src/lib/report-period.ts` — one shape keeps screen, PDF and Excel identical.
+- Printing relies on `@page { margin: 0 }` plus `.print-sheet` padding in `src/styles.css` — zero margin stops browsers printing the page URL/title on statements.
