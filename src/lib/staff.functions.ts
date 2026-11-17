@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { canAssignRole } from "@/lib/permissions";
 
 const roleEnum = z.enum(["super_admin", "admin", "supervisor", "credit_officer", "finance_officer"]);
 type Role = z.infer<typeof roleEnum>;
@@ -61,9 +62,7 @@ async function callerRole(ctx: { supabase: any; userId: string }): Promise<Role 
   return isSuper ? "super_admin" : "admin";
 }
 
-function canAssign(caller: Role, target: Role) {
-  return caller === "super_admin" || !["super_admin", "admin"].includes(target);
-}
+const canAssign = (caller: Role, target: Role) => canAssignRole(caller, target);
 
 async function targetRole(sa: any, userId: string): Promise<Role | null> {
   const { data } = await sa.from("user_roles").select("role").eq("user_id", userId);

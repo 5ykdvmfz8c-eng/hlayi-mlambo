@@ -53,3 +53,8 @@ export function assignableRoles(role: AppRole | null | undefined): AppRole[] {
   if (role === "admin") return ["supervisor", "credit_officer", "finance_officer"];
   return [];
 }
+
+/** Whether `caller` may give `target` role to someone, or manage an account that holds it. */
+export function canAssignRole(caller: AppRole | null | undefined, target: AppRole): boolean {
+  return assignableRoles(caller).includes(target);
+}
