@@ -285,6 +285,137 @@ export type Database = {
         }
         Relationships: []
       }
+      loan_agreements: {
+        Row: {
+          agreement_number: string
+          created_at: string
+          customer_id: string
+          customer_sign_ip: string | null
+          customer_sign_method: string | null
+          customer_sign_user_agent: string | null
+          customer_signature: string | null
+          customer_signed_at: string | null
+          customer_signed_name: string | null
+          customer_signed_place: string | null
+          details: Json
+          id: string
+          loan_id: string
+          paper_recorded_by: string | null
+          prepared_by: string
+          rep_name: string | null
+          rep_signature: string | null
+          rep_signed_at: string | null
+          rep_signed_place: string | null
+          rep_title: string | null
+          rep_user_id: string | null
+          sign_attempts: number
+          sign_token: string | null
+          sign_token_expires_at: string | null
+          signed_hash: string | null
+          signed_terms: Json | null
+          updated_at: string
+          witness_name: string | null
+          witness_signature: string | null
+          witness_signed_at: string | null
+          witness_signed_place: string | null
+        }
+        Insert: {
+          agreement_number: string
+          created_at?: string
+          customer_id: string
+          customer_sign_ip?: string | null
+          customer_sign_method?: string | null
+          customer_sign_user_agent?: string | null
+          customer_signature?: string | null
+          customer_signed_at?: string | null
+          customer_signed_name?: string | null
+          customer_signed_place?: string | null
+          details?: Json
+          id?: string
+          loan_id: string
+          paper_recorded_by?: string | null
+          prepared_by?: string
+          rep_name?: string | null
+          rep_signature?: string | null
+          rep_signed_at?: string | null
+          rep_signed_place?: string | null
+          rep_title?: string | null
+          rep_user_id?: string | null
+          sign_attempts?: number
+          sign_token?: string | null
+          sign_token_expires_at?: string | null
+          signed_hash?: string | null
+          signed_terms?: Json | null
+          updated_at?: string
+          witness_name?: string | null
+          witness_signature?: string | null
+          witness_signed_at?: string | null
+          witness_signed_place?: string | null
+        }
+        Update: {
+          agreement_number?: string
+          created_at?: string
+          customer_id?: string
+          customer_sign_ip?: string | null
+          customer_sign_method?: string | null
+          customer_sign_user_agent?: string | null
+          customer_signature?: string | null
+          customer_signed_at?: string | null
+          customer_signed_name?: string | null
+          customer_signed_place?: string | null
+          details?: Json
+          id?: string
+          loan_id?: string
+          paper_recorded_by?: string | null
+          prepared_by?: string
+          rep_name?: string | null
+          rep_signature?: string | null
+          rep_signed_at?: string | null
+          rep_signed_place?: string | null
+          rep_title?: string | null
+          rep_user_id?: string | null
+          sign_attempts?: number
+          sign_token?: string | null
+          sign_token_expires_at?: string | null
+          signed_hash?: string | null
+          signed_terms?: Json | null
+          updated_at?: string
+          witness_name?: string | null
+          witness_signature?: string | null
+          witness_signed_at?: string | null
+          witness_signed_place?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "loan_agreements_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customer_overview"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "loan_agreements_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "loan_agreements_loan_id_fkey"
+            columns: ["loan_id"]
+            isOneToOne: true
+            referencedRelation: "loan_summary"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "loan_agreements_loan_id_fkey"
+            columns: ["loan_id"]
+            isOneToOne: true
+            referencedRelation: "loans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       loan_transactions: {
         Row: {
           created_at: string
