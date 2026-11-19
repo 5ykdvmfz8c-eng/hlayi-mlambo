@@ -81,7 +81,7 @@ function SignPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="bg-brand-gradient px-5 py-5"><div className="mx-auto max-w-2xl"><Logo variant="light" /></div></header>
+      <header className="bg-brand-gradient px-5 py-5"><div className="mx-auto max-w-2xl"><Logo tone="light" /></div></header>
       <main className="mx-auto max-w-2xl px-5 py-8">
         {info.isLoading ? (
           <p className="text-sm text-muted-foreground">Opening your agreement…</p>
