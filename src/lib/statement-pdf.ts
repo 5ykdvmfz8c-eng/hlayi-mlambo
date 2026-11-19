@@ -25,9 +25,9 @@ const GREY: [number, number, number] = [95, 95, 95];
 
 export function footerText(d: Pick<StatementData, "id" | "statement_number" | "generated_at">) {
   const provider = COMPANY.ncrNumber
-    ? `${COMPANY.name} is a registered credit provider (${COMPANY.ncrNumber}).`
+    ? `${COMPANY.name} is a registered credit provider (NCR Reg. No. ${COMPANY.ncrNumber}).`
     : `${COMPANY.name}.`;
-  const reg = COMPANY.registrationNumber ? ` Reg. No.: ${COMPANY.registrationNumber}.` : "";
+  const reg = COMPANY.registrationNumber ? ` CIPC Reg. No.: ${COMPANY.registrationNumber}.` : "";
   return {
     line1: `${provider}${reg} Confidential - contains personal information protected under POPIA.`,
     line2: `Unique Document No.: ${d.id} / ${d.statement_number} / ${fmtDateTime(d.generated_at)}`,

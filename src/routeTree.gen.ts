@@ -22,6 +22,8 @@ import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedStaffRouteImport } from './routes/_authenticated/staff'
 import { Route as AuthenticatedStatementsRouteImport } from './routes/_authenticated/statements'
+import { Route as SignTokenRouteImport } from './routes/sign/$token'
+import { Route as AuthenticatedAgreementsLoanIdRouteImport } from './routes/_authenticated/agreements/$loanId'
 import { Route as AuthenticatedCustomersIndexRouteImport } from './routes/_authenticated/customers/index'
 import { Route as AuthenticatedCustomersCustomerIdRouteImport } from './routes/_authenticated/customers/$customerId'
 import { Route as AuthenticatedLoansIndexRouteImport } from './routes/_authenticated/loans/index'
@@ -94,6 +96,17 @@ const AuthenticatedStatementsRoute = AuthenticatedStatementsRouteImport.update({
   path: '/statements',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const SignTokenRoute = SignTokenRouteImport.update({
+  id: '/sign/$token',
+  path: '/sign/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAgreementsLoanIdRoute =
+  AuthenticatedAgreementsLoanIdRouteImport.update({
+    id: '/agreements/$loanId',
+    path: '/agreements/$loanId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedCustomersIndexRoute =
   AuthenticatedCustomersIndexRouteImport.update({
     id: '/customers/',
@@ -131,6 +144,8 @@ export interface FileRoutesByFullPath {
   '/settings': typeof AuthenticatedSettingsRoute
   '/staff': typeof AuthenticatedStaffRoute
   '/statements': typeof AuthenticatedStatementsRoute
+  '/sign/$token': typeof SignTokenRoute
+  '/agreements/$loanId': typeof AuthenticatedAgreementsLoanIdRoute
   '/customers/$customerId': typeof AuthenticatedCustomersCustomerIdRoute
   '/loans/$loanId': typeof AuthenticatedLoansLoanIdRoute
   '/customers/': typeof AuthenticatedCustomersIndexRoute
@@ -149,6 +164,8 @@ export interface FileRoutesByTo {
   '/settings': typeof AuthenticatedSettingsRoute
   '/staff': typeof AuthenticatedStaffRoute
   '/statements': typeof AuthenticatedStatementsRoute
+  '/sign/$token': typeof SignTokenRoute
+  '/agreements/$loanId': typeof AuthenticatedAgreementsLoanIdRoute
   '/customers/$customerId': typeof AuthenticatedCustomersCustomerIdRoute
   '/loans/$loanId': typeof AuthenticatedLoansLoanIdRoute
   '/customers': typeof AuthenticatedCustomersIndexRoute
@@ -169,6 +186,8 @@ export interface FileRoutesById {
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/staff': typeof AuthenticatedStaffRoute
   '/_authenticated/statements': typeof AuthenticatedStatementsRoute
+  '/sign/$token': typeof SignTokenRoute
+  '/_authenticated/agreements/$loanId': typeof AuthenticatedAgreementsLoanIdRoute
   '/_authenticated/customers/$customerId': typeof AuthenticatedCustomersCustomerIdRoute
   '/_authenticated/loans/$loanId': typeof AuthenticatedLoansLoanIdRoute
   '/_authenticated/customers/': typeof AuthenticatedCustomersIndexRoute
@@ -189,6 +208,8 @@ export interface FileRouteTypes {
     | '/settings'
     | '/staff'
     | '/statements'
+    | '/sign/$token'
+    | '/agreements/$loanId'
     | '/customers/$customerId'
     | '/loans/$loanId'
     | '/customers/'
@@ -207,6 +228,8 @@ export interface FileRouteTypes {
     | '/settings'
     | '/staff'
     | '/statements'
+    | '/sign/$token'
+    | '/agreements/$loanId'
     | '/customers/$customerId'
     | '/loans/$loanId'
     | '/customers'
@@ -226,6 +249,8 @@ export interface FileRouteTypes {
     | '/_authenticated/settings'
     | '/_authenticated/staff'
     | '/_authenticated/statements'
+    | '/sign/$token'
+    | '/_authenticated/agreements/$loanId'
     | '/_authenticated/customers/$customerId'
     | '/_authenticated/loans/$loanId'
     | '/_authenticated/customers/'
@@ -237,6 +262,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  SignTokenRoute: typeof SignTokenRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -332,6 +358,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedStatementsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/sign/$token': {
+      id: '/sign/$token'
+      path: '/sign/$token'
+      fullPath: '/sign/$token'
+      preLoaderRoute: typeof SignTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/agreements/$loanId': {
+      id: '/_authenticated/agreements/$loanId'
+      path: '/agreements/$loanId'
+      fullPath: '/agreements/$loanId'
+      preLoaderRoute: typeof AuthenticatedAgreementsLoanIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/customers/': {
       id: '/_authenticated/customers/'
       path: '/customers'
@@ -373,6 +413,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedStaffRoute: typeof AuthenticatedStaffRoute
   AuthenticatedStatementsRoute: typeof AuthenticatedStatementsRoute
+  AuthenticatedAgreementsLoanIdRoute: typeof AuthenticatedAgreementsLoanIdRoute
   AuthenticatedCustomersCustomerIdRoute: typeof AuthenticatedCustomersCustomerIdRoute
   AuthenticatedLoansLoanIdRoute: typeof AuthenticatedLoansLoanIdRoute
   AuthenticatedCustomersIndexRoute: typeof AuthenticatedCustomersIndexRoute
@@ -389,6 +430,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedStaffRoute: AuthenticatedStaffRoute,
   AuthenticatedStatementsRoute: AuthenticatedStatementsRoute,
+  AuthenticatedAgreementsLoanIdRoute: AuthenticatedAgreementsLoanIdRoute,
   AuthenticatedCustomersCustomerIdRoute: AuthenticatedCustomersCustomerIdRoute,
   AuthenticatedLoansLoanIdRoute: AuthenticatedLoansLoanIdRoute,
   AuthenticatedCustomersIndexRoute: AuthenticatedCustomersIndexRoute,
@@ -403,6 +445,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  SignTokenRoute: SignTokenRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

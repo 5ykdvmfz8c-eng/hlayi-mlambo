@@ -2,11 +2,11 @@
 export const COMPANY = {
   name: "H&M Consulting & Tech",
   tagline: "Credit and loan management by H&M Consulting & Tech",
-  addressLines: [] as string[],
+  addressLines: ["1st Avenue Street", "Gunhill", "Kroonstad", "9499"] as string[],
   phone: "",
   email: "",
-  registrationNumber: "",
-  ncrNumber: "",
+  registrationNumber: "K20119550003",
+  ncrNumber: "2006008265",
 };
 
 /** Statement amount format: "1 000.00" (the column header carries the R). */
